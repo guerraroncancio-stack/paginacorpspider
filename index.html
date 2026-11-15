@@ -3,9 +3,25 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#08080d" />
+<meta name="description" content="Scrims Mixtas de la Corporación Spider's. Reserva tu cupo en las próximas jornadas." />
+<meta property="og:title" content="Scrims Mixtas · Spider's" />
+<meta property="og:description" content="Reserva tu cupo en las próximas scrims. Al confirmar se abre el grupo de coordinación." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕷️</text></svg>" />
 <title>Scrims Mixtas · Spider's</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+<!--
+  Google Analytics (opcional): descomenta y pon tu ID
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+-->
 <style>
   :root{
     --bg:#08080d; --card:#111119; --border:#22222f;
@@ -25,17 +41,7 @@
 
   .hero{text-align:center;margin-bottom:40px}
   .hero .eyebrow{color:var(--neon2);font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
-  .hero h1{
-    font-family:'Orbitron',sans-serif;
-    font-size:clamp(30px,6vw,52px);
-    line-height:1.05;
-    margin-bottom:16px;
-    color:#fff;
-    background:linear-gradient(90deg,#fff,var(--neon));
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
+  .hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(30px,6vw,52px);line-height:1.05;margin-bottom:16px;color:#fff;background:linear-gradient(90deg,#fff,var(--neon));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
   @supports not ((-webkit-background-clip:text) or (background-clip:text)){
     .hero h1{background:none;color:var(--neon);-webkit-text-fill-color:var(--neon);text-shadow:0 0 18px rgba(255,90,31,.45);}
   }
@@ -54,6 +60,7 @@
   .badge.libre{background:rgba(0,200,120,.15);color:#1ed760;border:1px solid rgba(30,215,96,.4)}
   .badge.lleno{background:rgba(255,60,60,.15);color:#ff5c5c;border:1px solid rgba(255,60,60,.4)}
   .badge.cerrado{background:rgba(180,180,180,.12);color:#aaa;border:1px solid #444}
+  .badge.archivada{background:rgba(120,120,140,.15);color:#9a9ab0;border:1px solid #555}
   .scrim .info{color:var(--muted);font-size:14px;line-height:1.6}
   .scrim .info b{color:var(--text)}
   .bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
@@ -119,6 +126,7 @@
   .btn-sm.edit{background:var(--neon2);color:#0a0a0f}
   .btn-sm.del{background:var(--danger);color:#fff}
   .btn-sm.ver{background:var(--neon);color:#0a0a0f}
+  .btn-sm.copy{background:#2a3a2a;color:#1ed760}
   .btn-sm:hover{transform:translateY(-1px)}
 
   .result-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
@@ -161,9 +169,14 @@
   .info-box{background:rgba(255,183,3,.08);border:1px solid rgba(255,183,3,.3);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--neon2);margin-bottom:14px;line-height:1.5}
 
   .equipo-row{display:flex;justify-content:space-between;align-items:center;background:#0a0a0f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:6px}
-  .equipo-row .info-eq{line-height:1.4}
+  .equipo-row .info-eq{line-height:1.4;flex:1}
   .equipo-row .info-eq small{color:var(--muted);font-size:12px}
-  .equipo-row button{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:18px;padding:4px 8px}
+  .equipo-row .acciones-eq{display:flex;gap:4px}
+  .equipo-row button{background:transparent;border:none;cursor:pointer;font-size:16px;padding:4px 8px}
+  .equipo-row button.expulsar{color:var(--danger)}
+  .equipo-row button.wsp{color:#1ed760}
+
+  .helper{color:var(--muted);font-size:12px;margin-top:-8px;margin-bottom:12px}
 
   @media(max-width:520px){header{flex-direction:column;align-items:flex-start}.form-row,.form-row.three{grid-template-columns:1fr}.pos-input{grid-template-columns:50px 1fr 80px 80px}}
 </style>
@@ -222,6 +235,7 @@
       <button class="tab" data-tab="config">Puntaje</button>
       <button class="tab" data-tab="grupos">Grupos</button>
       <button class="tab" data-tab="ranking">Ranking</button>
+      <button class="tab" data-tab="historial">Historial</button>
     </div>
 
     <div id="tab-crear" class="tab-content">
@@ -238,9 +252,7 @@
         <div class="form-row">
           <div class="field"><label>Cupos máximos</label><input type="number" id="newMax" value="12" min="1" /></div>
           <div class="field"><label>Grupo de WhatsApp</label>
-            <select id="newLink">
-              <option value="">Selecciona un grupo</option>
-            </select>
+            <select id="newLink"><option value="">Selecciona un grupo</option></select>
           </div>
         </div>
         <div class="form-row full">
@@ -257,12 +269,8 @@
     <div id="tab-resultados" class="tab-content" style="display:none">
       <div class="admin-section">
         <h2>Seleccionar scrim</h2>
-        <div class="field">
-          <label>Scrim</label>
-          <select id="selScrimResultados"></select>
-        </div>
+        <div class="field"><label>Scrim</label><select id="selScrimResultados"></select></div>
       </div>
-
       <div class="admin-section">
         <h2>Modo OCR (opcional)</h2>
         <div class="info-box">El OCR intenta leer la captura y te muestra el texto detectado. Siempre revisa y corrige manualmente antes de calcular.</div>
@@ -274,7 +282,6 @@
         <div class="ocr-progress" id="ocrProgress"></div>
         <div class="ocr-text" id="ocrText" style="display:none"></div>
       </div>
-
       <div class="admin-section">
         <h2>Modo Manual — Resultados</h2>
         <div class="info-box">Edita posición y kills de cada equipo. El puntaje se calcula solo con la configuración de la pestaña Puntaje.</div>
@@ -283,7 +290,6 @@
           <button class="primary" id="guardarResultados" style="max-width:260px">Guardar y calcular</button>
         </div>
       </div>
-
       <div class="admin-section" id="tablaResultadosWrap" style="display:none">
         <h2>Tabla de resultados</h2>
         <div id="tablaResultados"></div>
@@ -300,9 +306,7 @@
             <select id="cfgAcumular"><option value="no">No, solo por jornada</option><option value="si">Sí, acumular</option></select>
           </div>
         </div>
-        <div class="form-row full">
-          <div class="field"><label>Puntos por posición (Top 1 a Top 12)</label></div>
-        </div>
+        <div class="form-row full"><div class="field"><label>Puntos por posición (Top 1 a Top 12)</label></div></div>
         <div id="configPosiciones"></div>
         <div class="btn-row" style="margin-top:18px"><button class="primary" id="guardarConfig" style="max-width:220px">Guardar configuración</button></div>
       </div>
@@ -326,11 +330,28 @@
     <div id="tab-ranking" class="tab-content" style="display:none">
       <div class="admin-section">
         <h2>Ranking general</h2>
+        <div class="form-row">
+          <div class="field"><label>Filtrar scrims</label>
+            <select id="filtroRanking">
+              <option value="todas">Todas las scrims</option>
+              <option value="abiertas">Solo abiertas</option>
+              <option value="cerradas">Solo cerradas</option>
+            </select>
+          </div>
+        </div>
         <div class="info-box" id="rankingInfo"></div>
         <div id="rankingTabla"></div>
         <div class="btn-row" style="margin-top:18px">
           <button class="ghost" id="exportRanking" style="max-width:200px">Exportar CSV</button>
         </div>
+      </div>
+    </div>
+
+    <div id="tab-historial" class="tab-content" style="display:none">
+      <div class="admin-section">
+        <h2>Historial de scrims archivadas</h2>
+        <div class="info-box">Las scrims archivadas no aparecen en la página pública pero conservan sus resultados y equipos. Puedes restaurarlas en cualquier momento.</div>
+        <div class="admin-list" id="historialList"></div>
       </div>
     </div>
   </div>
@@ -344,9 +365,9 @@
     <div id="reservaFormWrap">
       <h3 id="reservaTitulo">Reservar cupo</h3>
       <p class="sub" id="reservaSub">Completa los datos de tu equipo.</p>
-      <div class="field"><label>Nombre del equipo</label><input type="text" id="rEquipo" placeholder="Ej: Los Inmortales" /></div>
+      <div class="field"><label>Nombre del equipo</label><input type="text" id="rEquipo" placeholder="Ej: Los Inmortales" maxlength="20" /></div>
       <div class="field"><label>Tag</label><input type="text" id="rTag" placeholder="Ej: LI" maxlength="6" /></div>
-      <div class="field"><label>WhatsApp</label><input type="text" id="rWa" placeholder="+57 300 000 0000" /></div>
+      <div class="field"><label>WhatsApp</label><input type="text" id="rWa" placeholder="+57 300 000 0000" maxlength="20" /></div>
       <button class="primary" id="confirmarReserva">Confirmar reserva</button>
       <div class="error" id="reservaError"></div>
     </div>
@@ -380,6 +401,11 @@ const $ = (id) => document.getElementById(id);
 function safeOn(id, ev, fn){ const el = $(id); if(el) el.addEventListener(ev, fn); }
 function safeSet(id, prop, val){ const el = $(id); if(el) el[prop] = val; }
 function esc(str){ return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtFecha(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('es-CO', {day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'});
+}
 
 /* ============================================================
    CONFIG
@@ -454,10 +480,11 @@ function renderPublico(){
   const dir = $('directiva');
   if(dir) dir.innerHTML = DIRECTIVA.map(d => `<div class="chip"><b>${d.rol}:</b> ${d.nombres}</div>`).join('');
 
+  const activas = SCRIMS.filter(s => s.estado !== 'archivada');
   const cont = $('scrimsContainer');
   if(cont){
-    if(SCRIMS.length === 0){ cont.innerHTML = `<div class="empty-state">No hay scrims creadas todavía. Vuelve más tarde.</div>`; }
-    else { cont.innerHTML = `<div class="grid">${SCRIMS.map(renderScrimCard).join('')}</div>`; }
+    if(activas.length === 0){ cont.innerHTML = `<div class="empty-state">No hay scrims creadas todavía. Vuelve más tarde.</div>`; }
+    else { cont.innerHTML = `<div class="grid">${activas.map(renderScrimCard).join('')}</div>`; }
   }
 
   const links = $('links');
@@ -495,6 +522,25 @@ function renderScrimCard(s){
 }
 
 /* ============================================================
+   VALIDACIONES
+   ============================================================ */
+function validarEquipo(nombre){
+  if(nombre.length < 3) return 'El nombre debe tener al menos 3 caracteres.';
+  if(nombre.length > 20) return 'El nombre no puede pasar de 20 caracteres.';
+  if(!/^[\w\sÁÉÍÓÚáéíóúñÑ.\-]+$/i.test(nombre)) return 'El nombre solo admite letras, números y guiones.';
+  return null;
+}
+function validarTag(tag){
+  if(!/^[A-Za-z0-9]{2,6}$/.test(tag)) return 'El tag debe ser 2 a 6 letras/números.';
+  return null;
+}
+function validarWa(wa){
+  const limpio = wa.replace(/[\s\-\(\)]/g, '');
+  if(!/^\+?[0-9]{10,15}$/.test(limpio)) return 'WhatsApp inválido (10-15 dígitos).';
+  return null;
+}
+
+/* ============================================================
    RESERVA
    ============================================================ */
 let scrimActual = null;
@@ -508,6 +554,9 @@ function abrirReserva(id){
   const fw = $('reservaFormWrap'); if(fw) fw.style.display = 'block';
   const ok = $('reservaOk'); if(ok) ok.style.display = 'none';
   safeSet('reservaError', 'textContent', '');
+  safeSet('rEquipo', 'value', '');
+  safeSet('rTag', 'value', '');
+  safeSet('rWa', 'value', '');
   const m = $('reservaModal'); if(m) m.classList.add('show');
 }
 
@@ -516,10 +565,23 @@ document.getElementById('confirmarReserva').addEventListener('click', () => {
   const tag = $('rTag').value.trim();
   const wa = $('rWa').value.trim();
   const err = $('reservaError');
-  if(!eq || !tag || !wa){ err.textContent = 'Completa todos los campos.'; return; }
+
+  const errEq = validarEquipo(eq);
+  if(errEq){ err.textContent = errEq; return; }
+  const errTag = validarTag(tag);
+  if(errTag){ err.textContent = errTag; return; }
+  const errWa = validarWa(wa);
+  if(errWa){ err.textContent = errWa; return; }
+
   if(!scrimActual) return;
-  if(scrimActual.equipos.some(e => e.equipo.toLowerCase() === eq.toLowerCase())){ err.textContent = 'Ese equipo ya está inscrito.'; return; }
+  if(scrimActual.equipos.some(e => e.equipo.toLowerCase() === eq.toLowerCase())){
+    err.textContent = 'Ese nombre de equipo ya está inscrito.'; return;
+  }
+  if(scrimActual.equipos.some(e => e.wa.replace(/\D/g,'') === wa.replace(/\D/g,''))){
+    err.textContent = 'Ese WhatsApp ya reservó un cupo en esta scrim.'; return;
+  }
   if(scrimActual.equipos.length >= scrimActual.max){ err.textContent = 'Cupos agotados.'; return; }
+
   scrimActual.equipos.push({ equipo: eq, tag: tag, wa: wa, ts: Date.now() });
   guardarScrims();
   const linkWa = scrimActual.linkWa || (GRUPOS[0] && GRUPOS[0].link) || '#';
@@ -536,6 +598,7 @@ function cargarPanel(){
   safeSet('userName', 'textContent', ADMIN.nombre);
   safeSet('userRol', 'textContent', ADMIN.rol);
   renderAdminList();
+  renderHistorial();
   renderSelectScrims();
   renderSelectGrupos();
   renderGruposList();
@@ -548,8 +611,9 @@ function cargarPanel(){
 function renderAdminList(){
   const cont = $('adminList');
   if(!cont) return;
-  if(SCRIMS.length === 0){ cont.innerHTML = '<div class="empty-state">Aún no has creado ninguna scrim.</div>'; return; }
-  cont.innerHTML = SCRIMS.map(s => {
+  const activas = SCRIMS.filter(s => s.estado !== 'archivada');
+  if(activas.length === 0){ cont.innerHTML = '<div class="empty-state">Aún no has creado ninguna scrim activa.</div>'; return; }
+  cont.innerHTML = activas.map(s => {
     const libres = s.max - s.equipos.length;
     return `
       <div class="admin-item">
@@ -558,10 +622,27 @@ function renderAdminList(){
           <button class="btn-sm ver" onclick="verEquipos('${s.id}')">Equipos</button>
           <button class="btn-sm ver" onclick="irAResultados('${s.id}')">Resultados</button>
           <button class="btn-sm edit" onclick="toggleEstado('${s.id}')">${s.estado === 'abierta' ? 'Cerrar' : 'Abrir'}</button>
-          <button class="btn-sm del" onclick="eliminarScrim('${s.id}')">Borrar</button>
+          <button class="btn-sm del" onclick="archivarScrim('${s.id}')">Archivar</button>
         </div>
       </div>`;
   }).join('');
+}
+
+function renderHistorial(){
+  const cont = $('historialList');
+  if(!cont) return;
+  const arch = SCRIMS.filter(s => s.estado === 'archivada');
+  if(arch.length === 0){ cont.innerHTML = '<div class="empty-state">No hay scrims archivadas.</div>'; return; }
+  cont.innerHTML = arch.map(s => `
+    <div class="admin-item">
+      <div class="meta"><b>${esc(s.nombre)}</b><br>${esc(s.dia)} · ${esc(s.hora)}<br>${s.equipos.length} equipos · ${s.resultados ? 'Con resultados' : 'Sin resultados'}</div>
+      <div class="acciones">
+        <button class="btn-sm ver" onclick="verEquipos('${s.id}')">Equipos</button>
+        <button class="btn-sm edit" onclick="restaurarScrim('${s.id}')">Restaurar</button>
+        <button class="btn-sm del" onclick="eliminarScrim('${s.id}')">Borrar</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 document.getElementById('crearBtn').addEventListener('click', () => {
@@ -590,14 +671,25 @@ function toggleEstado(id){
   s.estado = s.estado === 'abierta' ? 'cerrada' : 'abierta';
   guardarScrims(); renderAdminList(); renderPublico(); mostrarToast('Estado actualizado');
 }
+function archivarScrim(id){
+  const s = SCRIMS.find(x => x.id === id); if(!s) return;
+  if(!confirm('¿Archivar esta scrim? Podrás restaurarla desde el historial.')) return;
+  s.estado = 'archivada';
+  guardarScrims(); renderAdminList(); renderHistorial(); renderPublico(); renderSelectScrims(); mostrarToast('Scrim archivada');
+}
+function restaurarScrim(id){
+  const s = SCRIMS.find(x => x.id === id); if(!s) return;
+  s.estado = 'abierta';
+  guardarScrims(); renderAdminList(); renderHistorial(); renderPublico(); renderSelectScrims(); mostrarToast('Scrim restaurada');
+}
 function eliminarScrim(id){
-  if(!confirm('¿Eliminar esta scrim?')) return;
+  if(!confirm('¿Eliminar esta scrim PERMANENTEMENTE? No se puede deshacer.')) return;
   SCRIMS = SCRIMS.filter(s => s.id !== id);
-  guardarScrims(); renderAdminList(); renderPublico(); renderSelectScrims(); mostrarToast('Scrim eliminada');
+  guardarScrims(); renderAdminList(); renderHistorial(); renderPublico(); renderSelectScrims(); mostrarToast('Scrim eliminada');
 }
 
 /* ============================================================
-   MODAL EQUIPOS (ver/eliminar)
+   MODAL EQUIPOS (ver/eliminar/notificar)
    ============================================================ */
 let scrimEquiposId = null;
 function verEquipos(id){
@@ -619,16 +711,30 @@ function renderEquiposLista(){
     <div class="equipo-row">
       <div class="info-eq">
         <b>${esc(e.equipo)}</b> <span style="color:var(--neon2)">[${esc(e.tag)}]</span><br>
-        <small>${esc(e.wa)}</small>
+        <small>${esc(e.wa)} · Inscrito ${fmtFecha(e.ts)}</small>
       </div>
-      <button onclick="expulsarEquipo(${i})" title="Expulsar">×</button>
+      <div class="acciones-eq">
+        <button class="wsp" onclick="waEquipo(${i})" title="Enviar WhatsApp">WA</button>
+        <button class="expulsar" onclick="expulsarEquipo(${i})" title="Expulsar">×</button>
+      </div>
     </div>
   `).join('');
+}
+function waEquipo(idx){
+  const s = SCRIMS.find(x => x.id === scrimEquiposId);
+  if(!s) return;
+  const e = s.equipos[idx];
+  if(!e) return;
+  const num = e.wa.replace(/\D/g,'');
+  const mensaje = encodeURIComponent(`Hola ${e.equipo}, te contactamos desde Spider's Scrims Mixtas por la scrim "${s.nombre}" (${s.dia} · ${s.hora}).`);
+  window.open(`https://wa.me/${num}?text=${mensaje}`, '_blank');
 }
 function expulsarEquipo(idx){
   const s = SCRIMS.find(x => x.id === scrimEquiposId);
   if(!s) return;
-  if(!confirm('¿Expulsar este equipo? El cupo se liberará automáticamente.')) return;
+  const e = s.equipos[idx];
+  if(!e) return;
+  if(!confirm(`¿Expulsar a "${e.equipo}"? El cupo se liberará automáticamente.`)) return;
   s.equipos.splice(idx, 1);
   guardarScrims();
   renderEquiposLista();
@@ -637,6 +743,11 @@ function expulsarEquipo(idx){
   const sub = $('equiposSub');
   if(sub) sub.textContent = `${s.equipos.length}/${s.max} inscritos · ${s.max - s.equipos.length} cupos libres`;
   mostrarToast('Equipo expulsado, cupo liberado');
+  if(confirm('¿Notificar al equipo por WhatsApp que su cupo fue liberado?')){
+    const num = e.wa.replace(/\D/g,'');
+    const msg = encodeURIComponent(`Hola ${e.equipo}, tu cupo en "${s.nombre}" fue liberado. Si deseas volver a inscribirte, entra a la página.`);
+    window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
+  }
 }
 safeOn('cerrarEquipos', 'click', () => { const m = $('equiposModal'); if(m) m.classList.remove('show'); });
 
@@ -659,15 +770,25 @@ function renderGruposList(){
     <div class="admin-item">
       <div class="meta"><b>${esc(g.nombre)}</b><br><span style="word-break:break-all">${esc(g.link)}</span></div>
       <div class="acciones">
+        <button class="btn-sm copy" onclick="copiarGrupo(${i})">Copiar link</button>
         <button class="btn-sm del" onclick="eliminarGrupo(${i})">Borrar</button>
       </div>
     </div>
   `).join('');
 }
+function copiarGrupo(i){
+  const g = GRUPOS[i];
+  if(!g) return;
+  navigator.clipboard.writeText(g.link).then(
+    () => mostrarToast('Link copiado'),
+    () => alert('No se pudo copiar. Copia manualmente: ' + g.link)
+  );
+}
 safeOn('agregarGrupoBtn', 'click', () => {
   const nombre = $('grupoNombre').value.trim();
   const link = $('grupoLink').value.trim();
   if(!nombre || !link){ alert('Completa nombre y link.'); return; }
+  if(!/^https?:\/\//i.test(link)){ alert('El link debe empezar con http:// o https://'); return; }
   GRUPOS.push({ nombre, link });
   guardarGruposStorage();
   renderGruposList();
@@ -698,6 +819,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     if(tab.dataset.tab === 'resultados'){ renderSelectScrims(); renderFormResultados(); }
     if(tab.dataset.tab === 'ranking') renderRanking();
     if(tab.dataset.tab === 'grupos'){ renderGruposList(); renderSelectGrupos(); }
+    if(tab.dataset.tab === 'historial') renderHistorial();
   });
 });
 function irAResultados(id){
@@ -751,7 +873,7 @@ function renderSelectScrims(){
   const sel = $('selScrimResultados');
   if(!sel) return;
   const actual = sel.value;
-  sel.innerHTML = '<option value="">Selecciona una scrim</option>' + SCRIMS.map(s => `<option value="${s.id}">${esc(s.nombre)} · ${esc(s.dia)}</option>`).join('');
+  sel.innerHTML = '<option value="">Selecciona una scrim</option>' + SCRIMS.map(s => `<option value="${s.id}">${esc(s.nombre)} · ${esc(s.dia)}${s.estado === 'archivada' ? ' [archivada]' : ''}</option>`).join('');
   if(actual && SCRIMS.find(s => s.id === actual)) sel.value = actual;
 }
 
@@ -924,15 +1046,19 @@ function intentarPreRellenar(texto){
 }
 
 /* ============================================================
-   RANKING
+   RANKING CON FILTRO
    ============================================================ */
 function renderRanking(){
   const cont = $('rankingTabla');
   const info = $('rankingInfo');
+  const filtroEl = $('filtroRanking');
   if(!cont) return;
+  const filtro = filtroEl ? filtroEl.value : 'todas';
   const totales = {};
   SCRIMS.forEach(s => {
     if(!s.resultados) return;
+    if(filtro === 'abiertas' && s.estado !== 'abierta') return;
+    if(filtro === 'cerradas' && s.estado !== 'cerrada') return;
     Object.entries(s.resultados).forEach(([eq, r]) => {
       if(!totales[eq]) totales[eq] = { pts: 0, kills: 0, scrims: 0 };
       totales[eq].pts += calcularPuntaje(r.pos, r.kills);
@@ -942,11 +1068,12 @@ function renderRanking(){
   });
   const lista = Object.entries(totales).map(([eq, t]) => ({ eq, ...t })).sort((a,b) => b.pts - a.pts || b.kills - a.kills);
   if(lista.length === 0){
-    cont.innerHTML = '<div class="empty-state">Aún no hay resultados guardados en ninguna scrim.</div>';
+    cont.innerHTML = '<div class="empty-state">No hay resultados para este filtro.</div>';
     if(info) info.textContent = '';
     return;
   }
-  if(info) info.innerHTML = 'Ranking general (suma de todas las scrims con resultados guardados).';
+  const etiqueta = filtro === 'abiertas' ? 'solo scrims abiertas' : filtro === 'cerradas' ? 'solo scrims cerradas' : 'todas las scrims';
+  if(info) info.innerHTML = 'Ranking general (' + etiqueta + ').';
   let html = `<table class="result-table"><thead><tr><th>#</th><th>Equipo</th><th>Scrims</th><th>Kills</th><th>Puntos</th></tr></thead><tbody>`;
   lista.forEach((f, i) => {
     html += `<tr><td>${i+1}</td><td>${esc(f.eq)}</td><td>${f.scrims}</td><td class="kills">${f.kills}</td><td class="pts">${f.pts}</td></tr>`;
@@ -954,11 +1081,16 @@ function renderRanking(){
   html += '</tbody></table>';
   cont.innerHTML = html;
 }
+safeOn('filtroRanking', 'change', renderRanking);
 
 document.getElementById('exportRanking').addEventListener('click', () => {
+  const filtroEl = $('filtroRanking');
+  const filtro = filtroEl ? filtroEl.value : 'todas';
   const totales = {};
   SCRIMS.forEach(s => {
     if(!s.resultados) return;
+    if(filtro === 'abiertas' && s.estado !== 'abierta') return;
+    if(filtro === 'cerradas' && s.estado !== 'cerrada') return;
     Object.entries(s.resultados).forEach(([eq, r]) => {
       if(!totales[eq]) totales[eq] = { pts: 0, kills: 0, scrims: 0 };
       totales[eq].pts += calcularPuntaje(r.pos, r.kills);
