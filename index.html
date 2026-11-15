@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Panel Staff · Spider's</title>
+<title>Scrims Mixtas · Spider's</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
 <style>
   :root{
     --bg:#08080d; --card:#111119; --border:#22222f;
@@ -12,297 +13,1020 @@
     --danger:#ff5c5c; --ok:#1ed760;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    font-family:'Rajdhani',sans-serif; background:var(--bg); color:var(--text);
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:24px;
-    background-image:radial-gradient(circle at 50% 0%, rgba(255,90,31,.15), transparent 50%);
-  }
+  body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px;
+    background-image:radial-gradient(circle at 10% 0%,rgba(255,90,31,.15),transparent 40%),radial-gradient(circle at 90% 100%,rgba(255,183,3,.10),transparent 45%);}
+  .wrap{max-width:1150px;margin:0 auto}
 
-  /* LOGIN */
-  .login{width:100%;max-width:420px}
-  .login .brand{font-family:'Orbitron',sans-serif;font-weight:800;font-size:22px;text-align:center;margin-bottom:10px;letter-spacing:2px}
-  .login .brand span{color:var(--neon)}
-  .login .sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px}
-  .login .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:14px}
+  .brand{font-family:'Orbitron',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px}
+  .brand span{color:var(--neon)}
+  .staff-btn{text-decoration:none;color:var(--text);font-size:13px;font-weight:700;border:1px solid var(--border);padding:10px 16px;border-radius:99px;letter-spacing:1px;transition:.2s;background:transparent;cursor:pointer;font-family:'Rajdhani',sans-serif}
+  .staff-btn:hover{border-color:var(--neon);color:var(--neon)}
+
+  .hero{text-align:center;margin-bottom:40px}
+  .hero .eyebrow{color:var(--neon2);font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+  .hero h1{
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(30px,6vw,52px);
+    line-height:1.05;
+    margin-bottom:16px;
+    color:#fff;
+    background:linear-gradient(90deg,#fff,var(--neon));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  @supports not ((-webkit-background-clip:text) or (background-clip:text)){
+    .hero h1{background:none;color:var(--neon);-webkit-text-fill-color:var(--neon);text-shadow:0 0 18px rgba(255,90,31,.45);}
+  }
+  .hero p{color:var(--muted);max-width:620px;margin:0 auto;font-size:17px;line-height:1.5}
+
+  .directiva{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:24px 0 40px}
+  .directiva .chip{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 18px;font-size:14px}
+  .directiva .chip b{color:var(--neon2);margin-right:6px;font-weight:700}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px}
+  .scrim{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;transition:.2s}
+  .scrim:hover{border-color:rgba(255,90,31,.5);transform:translateY(-3px)}
+  .scrim .head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .scrim .head h3{font-family:'Orbitron',sans-serif;font-size:16px;line-height:1.2}
+  .badge{font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .badge.libre{background:rgba(0,200,120,.15);color:#1ed760;border:1px solid rgba(30,215,96,.4)}
+  .badge.lleno{background:rgba(255,60,60,.15);color:#ff5c5c;border:1px solid rgba(255,60,60,.4)}
+  .badge.cerrado{background:rgba(180,180,180,.12);color:#aaa;border:1px solid #444}
+  .scrim .info{color:var(--muted);font-size:14px;line-height:1.6}
+  .scrim .info b{color:var(--text)}
+  .bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));transition:.4s}
+  .slots{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+  .slots strong{color:var(--neon2)}
+  .btn-reservar{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;color:#0a0a0f;background:linear-gradient(90deg,var(--neon),var(--neon2));transition:.2s}
+  .btn-reservar:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,90,31,.35)}
+  .btn-reservar:disabled{opacity:.4;cursor:not-allowed;background:#333;color:#888}
+
+  .links{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:56px 0 24px}
+  .links a{text-decoration:none;color:var(--text);font-weight:700;padding:14px 22px;border-radius:12px;border:1px solid var(--border);background:var(--card);transition:.2s;font-size:15px}
+  .links a:hover{border-color:var(--neon);color:var(--neon)}
+  .links a.wa{border-color:rgba(30,215,96,.4)}.links a.wa:hover{border-color:#1ed760;color:#1ed760}
+  .links a.ig{border-color:rgba(255,90,31,.4)}.links a.ig:hover{border-color:var(--neon);color:var(--neon)}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+  footer a{color:var(--neon);text-decoration:none;font-weight:700}
+
+  #loginView{display:none;max-width:420px;margin:60px auto}
+  #loginView .brand{font-family:'Orbitron',sans-serif;font-weight:800;font-size:22px;text-align:center;margin-bottom:10px;letter-spacing:2px}
+  #loginView .brand span{color:var(--neon)}
+  #loginView .sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px}
+  .login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px}
   .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
   label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600}
-  input{
-    background:#0a0a0f;border:1px solid var(--border);border-radius:10px;
-    padding:13px 14px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;outline:none;
-  }
-  input:focus{border-color:var(--neon)}
-  button.primary{
-    width:100%;padding:15px;border:none;border-radius:12px;
-    font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;
-    cursor:pointer;color:#0a0a0f;
-    background:linear-gradient(90deg,var(--neon),var(--neon2));
-    transition:.2s;
-  }
+  input,select,textarea{background:#0a0a0f;border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;outline:none;width:100%}
+  input:focus,select:focus,textarea:focus{border-color:var(--neon)}
+  textarea{resize:vertical;min-height:60px}
+  button.primary{width:100%;padding:15px;border:none;border-radius:12px;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;color:#0a0a0f;background:linear-gradient(90deg,var(--neon),var(--neon2));transition:.2s}
   button.primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,90,31,.35)}
+  button.ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 16px;border-radius:99px;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:1px;transition:.2s;font-family:'Rajdhani',sans-serif}
+  button.ghost:hover{border-color:var(--neon);color:var(--neon)}
   .error{color:var(--danger);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
 
-  /* PANEL */
-  .panel{display:none;width:100%;max-width:1100px}
-  .panel.show{display:block}
-  .panel-header{
-    display:flex;justify-content:space-between;align-items:center;
-    margin-bottom:30px;flex-wrap:wrap;gap:12px;
-  }
+  #panelView{display:none}
+  .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
   .panel-header h1{font-family:'Orbitron',sans-serif;font-size:22px}
   .panel-header h1 span{color:var(--neon)}
   .user-info{font-size:14px;color:var(--muted)}
   .user-info b{color:var(--neon2)}
-  .logout{
-    background:transparent;border:1px solid var(--border);color:var(--muted);
-    padding:10px 16px;border-radius:99px;cursor:pointer;font-weight:700;
-    font-size:13px;letter-spacing:1px;transition:.2s;
-  }
-  .logout:hover{border-color:var(--danger);color:var(--danger)}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
-  .bloque{
-    background:var(--card);border:1px solid var(--border);border-radius:18px;
-    padding:22px;display:flex;flex-direction:column;gap:14px;
-  }
-  .bloque h3{font-family:'Orbitron',sans-serif;font-size:17px;display:flex;justify-content:space-between;align-items:center}
-  .bloque .hora{color:var(--neon2);font-size:14px;font-weight:700}
-  .bloque .meta{color:var(--muted);font-size:13px}
+  .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:0}
+  .tab{padding:12px 20px;background:transparent;border:none;color:var(--muted);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;border-bottom:3px solid transparent;transition:.2s}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--neon);border-bottom-color:var(--neon)}
 
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .row select, .row input[type=text]{
-    flex:1;min-width:140px;
-  }
-  select{
-    background:#0a0a0f;border:1px solid var(--border);border-radius:10px;
-    padding:11px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none;
-  }
-  select:focus{border-color:var(--neon)}
-  textarea{
-    background:#0a0a0f;border:1px solid var(--border);border-radius:10px;
-    padding:11px 12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;
-    outline:none;resize:vertical;min-height:60px;width:100%;
-  }
-  textarea:focus{border-color:var(--neon)}
+  .admin-section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:24px}
+  .admin-section h2{font-family:'Orbitron',sans-serif;font-size:17px;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  .admin-section h2::before{content:'';width:5px;height:20px;background:linear-gradient(180deg,var(--neon),var(--neon2));border-radius:3px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .form-row.full{grid-template-columns:1fr}
+  .form-row.three{grid-template-columns:1fr 1fr 1fr}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .btn-row button{flex:1;min-width:140px}
 
-  .btn-sm{
-    padding:10px 14px;border-radius:10px;border:none;cursor:pointer;
-    font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;
-    color:#0a0a0f;background:linear-gradient(90deg,var(--neon),var(--neon2));
-    transition:.2s;
-  }
+  .admin-list{display:flex;flex-direction:column;gap:10px}
+  .admin-item{background:#0a0a0f;border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .admin-item .meta{font-size:13px;color:var(--muted);line-height:1.4}
+  .admin-item .meta b{color:var(--text);font-size:14px}
+  .admin-item .acciones{display:flex;gap:8px;flex-wrap:wrap}
+  .btn-sm{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;letter-spacing:.5px;transition:.2s}
+  .btn-sm.edit{background:var(--neon2);color:#0a0a0f}
+  .btn-sm.del{background:var(--danger);color:#fff}
+  .btn-sm.ver{background:var(--neon);color:#0a0a0f}
   .btn-sm:hover{transform:translateY(-1px)}
-  .btn-sm.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-  .btn-sm.ghost:hover{color:var(--text);border-color:var(--neon)}
 
-  .equipos-list{
-    border-top:1px dashed var(--border);padding-top:12px;
-    display:flex;flex-direction:column;gap:6px;font-size:14px;
-  }
-  .equipo-item{
-    display:flex;justify-content:space-between;align-items:center;
-    background:#0a0a0f;border:1px solid var(--border);border-radius:8px;
-    padding:8px 12px;
-  }
-  .equipo-item button{
-    background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:14px;
-  }
-  .equipo-item .idx{color:var(--muted);font-size:12px;margin-right:6px}
+  .result-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  .result-table th{background:#0a0a0f;color:var(--neon2);padding:10px;text-align:left;border-bottom:2px solid var(--border);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+  .result-table td{padding:10px;border-bottom:1px solid var(--border)}
+  .result-table tr:hover td{background:rgba(255,90,31,.05)}
+  .result-table .pts{color:var(--neon2);font-weight:800;font-family:'Orbitron',sans-serif}
+  .result-table .top1{color:var(--neon2);font-weight:800}
+  .result-table .kills{color:#1ed760;font-weight:700}
+  .pos-input{display:grid;grid-template-columns:60px 1fr 100px 100px;gap:8px;align-items:center;margin-bottom:8px}
+  .pos-input .num{text-align:center;color:var(--neon2);font-weight:800;font-family:'Orbitron',sans-serif}
+  .pos-input .pts-preview{text-align:center;color:var(--muted);font-size:13px}
 
-  .empty{color:var(--muted);font-size:13px;text-align:center;padding:8px}
+  .ocr-drop{border:2px dashed var(--border);border-radius:14px;padding:30px;text-align:center;cursor:pointer;transition:.2s;background:#0a0a0f}
+  .ocr-drop:hover{border-color:var(--neon);background:rgba(255,90,31,.05)}
+  .ocr-drop.dragover{border-color:var(--neon);background:rgba(255,90,31,.1)}
+  .ocr-drop p{color:var(--muted);font-size:14px;margin-top:8px}
+  .ocr-preview{margin-top:16px;text-align:center}
+  .ocr-preview img{max-width:100%;max-height:300px;border-radius:12px;border:1px solid var(--border)}
+  .ocr-text{margin-top:16px;background:#0a0a0f;border:1px solid var(--border);border-radius:12px;padding:14px;font-family:monospace;font-size:13px;color:var(--muted);white-space:pre-wrap;max-height:200px;overflow-y:auto}
+  .ocr-progress{margin-top:12px;color:var(--neon2);font-size:14px;font-weight:700;text-align:center}
 
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);
-    background:var(--card);border:1px solid var(--ok);color:var(--ok);
-    padding:14px 24px;border-radius:12px;font-weight:700;font-size:14px;
-    transition:transform .3s;z-index:99;
-  }
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:20px;max-width:460px;width:100%;padding:28px;max-height:90vh;overflow-y:auto;position:relative}
+  .modal h3{font-family:'Orbitron',sans-serif;font-size:18px;margin-bottom:6px}
+  .modal .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .modal .close{position:absolute;top:14px;right:18px;cursor:pointer;color:var(--muted);font-size:22px;line-height:1}
+  .modal-ok{text-align:center}
+  .modal-ok .check{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 18px;color:#0a0a0f}
+  .modal-ok h3{font-family:'Orbitron',sans-serif;font-size:20px;margin-bottom:10px}
+  .modal-ok p{color:var(--muted);font-size:15px;margin-bottom:22px;line-height:1.5}
+  .modal-ok a{display:inline-block;padding:14px 26px;border-radius:12px;background:linear-gradient(90deg,var(--neon),var(--neon2));color:#0a0a0f;text-decoration:none;font-weight:800;font-family:'Orbitron',sans-serif;font-size:14px;margin-bottom:8px}
+  .modal-ok .cerrar{display:block;margin-top:14px;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);background:var(--card);border:1px solid var(--ok);color:var(--ok);padding:14px 24px;border-radius:12px;font-weight:700;font-size:14px;transition:transform .3s;z-index:999}
   .toast.show{transform:translateX(-50%) translateY(0)}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);background:var(--card);border:1px dashed var(--border);border-radius:18px}
+
+  .info-box{background:rgba(255,183,3,.08);border:1px solid rgba(255,183,3,.3);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--neon2);margin-bottom:14px;line-height:1.5}
+
+  .equipo-row{display:flex;justify-content:space-between;align-items:center;background:#0a0a0f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:6px}
+  .equipo-row .info-eq{line-height:1.4}
+  .equipo-row .info-eq small{color:var(--muted);font-size:12px}
+  .equipo-row button{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:18px;padding:4px 8px}
+
+  @media(max-width:520px){header{flex-direction:column;align-items:flex-start}.form-row,.form-row.three{grid-template-columns:1fr}.pos-input{grid-template-columns:50px 1fr 80px 80px}}
 </style>
 </head>
 <body>
 
-<!-- ============ LOGIN ============ -->
-<div class="login" id="loginView">
-  <div class="brand">SPIDER'S <span>·</span> STAFF</div>
-  <p class="sub">Acceso restringido a organizadores</p>
-  <div class="card">
-    <div class="field">
-      <label>Usuario</label>
-      <input type="text" id="user" autocomplete="username" />
+<div class="wrap">
+
+  <!-- ============ PÚBLICO ============ -->
+  <div id="publicView">
+    <header>
+      <div class="brand">SPIDER'S <span>·</span> SCRIMS MIXTAS</div>
+      <button class="staff-btn" id="goStaff">Staff</button>
+    </header>
+    <section class="hero">
+      <p class="eyebrow">Corporación Spider's</p>
+      <h1>Scrims Mixtas</h1>
+      <p>Reserva tu cupo en las próximas scrims. Al confirmar serás redirigido al grupo de coordinación de WhatsApp.</p>
+    </section>
+    <div class="directiva" id="directiva"></div>
+    <h2 style="font-family:'Orbitron',sans-serif;font-size:22px;margin:0 0 18px;display:flex;align-items:center;gap:12px">
+      <span style="width:6px;height:26px;background:linear-gradient(180deg,var(--neon),var(--neon2));border-radius:3px;display:inline-block"></span>
+      Scrims disponibles
+    </h2>
+    <div id="scrimsContainer"></div>
+    <div class="links" id="links"></div>
+    <footer>© 2026 Spider's · Scrims Mixtas · Página creada por <a href="https://www.instagram.com/guerra.jgc" target="_blank" rel="noopener">@guerra.jgc</a></footer>
+  </div>
+
+  <!-- ============ LOGIN ============ -->
+  <div id="loginView">
+    <div class="brand">SPIDER'S <span>·</span> STAFF</div>
+    <p class="sub">Acceso restringido</p>
+    <div class="login-card">
+      <div class="field"><label>Usuario</label><input type="text" id="user" autocomplete="username" /></div>
+      <div class="field"><label>Contraseña</label><input type="password" id="pass" autocomplete="current-password" /></div>
+      <button class="primary" id="loginBtn">Iniciar sesión</button>
+      <div class="error" id="loginError"></div>
+      <div style="text-align:center;margin-top:14px"><button class="ghost" id="backPublic">Volver</button></div>
     </div>
-    <div class="field">
-      <label>Contraseña</label>
-      <input type="password" id="pass" autocomplete="current-password" />
+  </div>
+
+  <!-- ============ PANEL ADMIN ============ -->
+  <div id="panelView">
+    <div class="panel-header">
+      <h1>Panel <span>Admin</span></h1>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="user-info">Conectado como <b id="userName"></b> · <span id="userRol"></span></div>
+        <button class="ghost" id="logoutBtn">Cerrar sesión</button>
+      </div>
     </div>
-    <button class="primary" id="loginBtn">Iniciar sesión</button>
-    <div class="error" id="loginError"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="crear">Crear scrim</button>
+      <button class="tab" data-tab="resultados">Resultados</button>
+      <button class="tab" data-tab="config">Puntaje</button>
+      <button class="tab" data-tab="grupos">Grupos</button>
+      <button class="tab" data-tab="ranking">Ranking</button>
+    </div>
+
+    <div id="tab-crear" class="tab-content">
+      <div class="admin-section">
+        <h2>Nueva scrim</h2>
+        <div class="form-row">
+          <div class="field"><label>Nombre de la scrim</label><input type="text" id="newNombre" placeholder="Ej: Scrim Mixta #12" /></div>
+          <div class="field"><label>Día / Modalidad</label><input type="text" id="newDia" placeholder="Ej: Lunes / Viernes" /></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Horario</label><input type="text" id="newHora" placeholder="Ej: 04:00 MX · 05:00 CO" /></div>
+          <div class="field"><label>Organizador</label><input type="text" id="newOrg" placeholder="Ej: Gero" /></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Cupos máximos</label><input type="number" id="newMax" value="12" min="1" /></div>
+          <div class="field"><label>Grupo de WhatsApp</label>
+            <select id="newLink">
+              <option value="">Selecciona un grupo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field"><label>Notas (opcional)</label><textarea id="newNotas" placeholder="Ej: Solo equipos con 4 jugadores"></textarea></div>
+        </div>
+        <div class="btn-row"><button class="primary" id="crearBtn" style="max-width:220px">Crear scrim</button></div>
+      </div>
+      <div class="admin-section">
+        <h2>Scrims creadas</h2>
+        <div class="admin-list" id="adminList"></div>
+      </div>
+    </div>
+
+    <div id="tab-resultados" class="tab-content" style="display:none">
+      <div class="admin-section">
+        <h2>Seleccionar scrim</h2>
+        <div class="field">
+          <label>Scrim</label>
+          <select id="selScrimResultados"></select>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h2>Modo OCR (opcional)</h2>
+        <div class="info-box">El OCR intenta leer la captura y te muestra el texto detectado. Siempre revisa y corrige manualmente antes de calcular.</div>
+        <div class="ocr-drop" id="ocrDrop">
+          <p>Arrastra la captura aquí o haz clic para seleccionar</p>
+          <input type="file" id="ocrInput" accept="image/*" style="display:none" />
+        </div>
+        <div class="ocr-preview" id="ocrPreview"></div>
+        <div class="ocr-progress" id="ocrProgress"></div>
+        <div class="ocr-text" id="ocrText" style="display:none"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2>Modo Manual — Resultados</h2>
+        <div class="info-box">Edita posición y kills de cada equipo. El puntaje se calcula solo con la configuración de la pestaña Puntaje.</div>
+        <div id="formResultados"></div>
+        <div class="btn-row" style="margin-top:18px">
+          <button class="primary" id="guardarResultados" style="max-width:260px">Guardar y calcular</button>
+        </div>
+      </div>
+
+      <div class="admin-section" id="tablaResultadosWrap" style="display:none">
+        <h2>Tabla de resultados</h2>
+        <div id="tablaResultados"></div>
+      </div>
+    </div>
+
+    <div id="tab-config" class="tab-content" style="display:none">
+      <div class="admin-section">
+        <h2>Configuración de puntaje</h2>
+        <div class="info-box">Estos valores se aplican a todas las scrims. Ajústalos según las reglas de cada jornada.</div>
+        <div class="form-row">
+          <div class="field"><label>Puntos por kill</label><input type="number" id="cfgKill" value="1" min="0" step="0.5" /></div>
+          <div class="field"><label>Acumular ranking entre scrims</label>
+            <select id="cfgAcumular"><option value="no">No, solo por jornada</option><option value="si">Sí, acumular</option></select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="field"><label>Puntos por posición (Top 1 a Top 12)</label></div>
+        </div>
+        <div id="configPosiciones"></div>
+        <div class="btn-row" style="margin-top:18px"><button class="primary" id="guardarConfig" style="max-width:220px">Guardar configuración</button></div>
+      </div>
+    </div>
+
+    <div id="tab-grupos" class="tab-content" style="display:none">
+      <div class="admin-section">
+        <h2>Agregar grupo de WhatsApp</h2>
+        <div class="form-row">
+          <div class="field"><label>Nombre del grupo</label><input type="text" id="grupoNombre" placeholder="Ej: Grupo Principal" /></div>
+          <div class="field"><label>Link del grupo</label><input type="text" id="grupoLink" placeholder="https://chat.whatsapp.com/..." /></div>
+        </div>
+        <div class="btn-row"><button class="primary" id="agregarGrupoBtn" style="max-width:220px">Agregar grupo</button></div>
+      </div>
+      <div class="admin-section">
+        <h2>Grupos registrados</h2>
+        <div class="admin-list" id="gruposList"></div>
+      </div>
+    </div>
+
+    <div id="tab-ranking" class="tab-content" style="display:none">
+      <div class="admin-section">
+        <h2>Ranking general</h2>
+        <div class="info-box" id="rankingInfo"></div>
+        <div id="rankingTabla"></div>
+        <div class="btn-row" style="margin-top:18px">
+          <button class="ghost" id="exportRanking" style="max-width:200px">Exportar CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL RESERVA -->
+<div class="modal-bg" id="reservaModal">
+  <div class="modal">
+    <span class="close" id="cerrarReserva">×</span>
+    <div id="reservaFormWrap">
+      <h3 id="reservaTitulo">Reservar cupo</h3>
+      <p class="sub" id="reservaSub">Completa los datos de tu equipo.</p>
+      <div class="field"><label>Nombre del equipo</label><input type="text" id="rEquipo" placeholder="Ej: Los Inmortales" /></div>
+      <div class="field"><label>Tag</label><input type="text" id="rTag" placeholder="Ej: LI" maxlength="6" /></div>
+      <div class="field"><label>WhatsApp</label><input type="text" id="rWa" placeholder="+57 300 000 0000" /></div>
+      <button class="primary" id="confirmarReserva">Confirmar reserva</button>
+      <div class="error" id="reservaError"></div>
+    </div>
+    <div id="reservaOk" style="display:none" class="modal-ok">
+      <div class="check">✓</div>
+      <h3>Cupo reservado</h3>
+      <p>Tu equipo quedó registrado. Entra al grupo de coordinación para recibir instrucciones.</p>
+      <a id="linkGrupoOk" href="#" target="_blank" rel="noopener">Entrar al grupo de WhatsApp</a>
+      <span class="cerrar" id="cerrarOk">Cerrar</span>
+    </div>
   </div>
 </div>
 
-<!-- ============ PANEL ============ -->
-<div class="panel" id="panelView">
-  <div class="panel-header">
-    <h1>Panel <span>Staff</span></h1>
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-      <div class="user-info">Conectado como <b id="userName"></b> · <span id="userRol"></span></div>
-      <button class="logout" id="logoutBtn">Cerrar sesión</button>
-    </div>
+<!-- MODAL EQUIPOS (admin) -->
+<div class="modal-bg" id="equiposModal">
+  <div class="modal">
+    <span class="close" id="cerrarEquipos">×</span>
+    <h3 id="equiposTitulo">Equipos inscritos</h3>
+    <p class="sub" id="equiposSub"></p>
+    <div id="equiposLista"></div>
   </div>
-
-  <div class="grid" id="bloquesContainer"></div>
 </div>
 
-<div class="toast" id="toast">Guardado ✓</div>
+<div class="toast" id="toast">Guardado</div>
 
-<script src="data.js"></script>
 <script>
-  // ================= LOGIN =================
-  const LS_KEY = 'spiders_staff_session';
+/* ============================================================
+   UTILIDADES SEGURAS
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+function safeOn(id, ev, fn){ const el = $(id); if(el) el.addEventListener(ev, fn); }
+function safeSet(id, prop, val){ const el = $(id); if(el) el[prop] = val; }
+function esc(str){ return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  function guardarSesion(usuario){
-    sessionStorage.setItem(LS_KEY, JSON.stringify({
-      user: usuario,
-      ts: Date.now()
-    }));
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const ADMIN = { user:"admin", pass:"spider2026", nombre:"Guerra.jgc", rol:"Creador" };
+const LINKS = {
+  instagram: "https://www.instagram.com/corpspiders?vrfl=MW1oMTZoaW51c3BwNQ==",
+  creador: "https://www.instagram.com/guerra.jgc"
+};
+const DIRECTIVA = [
+  { rol:"Dueños", nombres:"Pánico - Camila" },
+  { rol:"CEO", nombres:"Juan - Mar" }
+];
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const LS_SCRIMS = 'spiders_scrims_v3';
+const LS_SESSION = 'spiders_session_v3';
+const LS_CONFIG = 'spiders_config_v3';
+const LS_GRUPOS = 'spiders_grupos_v3';
+
+function cargarScrims(){
+  try{ const raw = localStorage.getItem(LS_SCRIMS); if(raw) return JSON.parse(raw); }catch(e){}
+  return [];
+}
+function guardarScrims(){ try{ localStorage.setItem(LS_SCRIMS, JSON.stringify(SCRIMS)); }catch(e){} }
+let SCRIMS = cargarScrims();
+
+function cargarGrupos(){
+  try{ const raw = localStorage.getItem(LS_GRUPOS); if(raw) return JSON.parse(raw); }catch(e){}
+  return [];
+}
+function guardarGruposStorage(){ try{ localStorage.setItem(LS_GRUPOS, JSON.stringify(GRUPOS)); }catch(e){} }
+let GRUPOS = cargarGrupos();
+
+function cargarConfig(){
+  try{ const raw = localStorage.getItem(LS_CONFIG); if(raw) return JSON.parse(raw); }catch(e){}
+  return { killPts: 1, posPts: [12,9,8,7,6,5,4,3,2,1,0,0], acumular: "no" };
+}
+function guardarConfigStorage(){ try{ localStorage.setItem(LS_CONFIG, JSON.stringify(CONFIG)); }catch(e){} }
+let CONFIG = cargarConfig();
+
+function guardarSesion(user){ try{ sessionStorage.setItem(LS_SESSION, JSON.stringify({ user, ts: Date.now() })); }catch(e){} }
+function leerSesion(){
+  try{
+    const raw = sessionStorage.getItem(LS_SESSION); if(!raw) return null;
+    const s = JSON.parse(raw);
+    if(Date.now() - s.ts > 4*60*60*1000) return null;
+    return s.user;
+  }catch(e){ return null; }
+}
+
+/* ============================================================
+   VISTAS
+   ============================================================ */
+function showView(name){
+  const pub = $('publicView'), log = $('loginView'), pan = $('panelView');
+  if(!pub || !log || !pan) return;
+  pub.style.display = 'none';
+  log.style.display = 'none';
+  pan.style.display = 'none';
+  if(name === 'public') pub.style.display = 'block';
+  else if(name === 'login') log.style.display = 'block';
+  else if(name === 'panel') pan.style.display = 'block';
+}
+
+/* ============================================================
+   RENDER PÚBLICO
+   ============================================================ */
+function renderPublico(){
+  const dir = $('directiva');
+  if(dir) dir.innerHTML = DIRECTIVA.map(d => `<div class="chip"><b>${d.rol}:</b> ${d.nombres}</div>`).join('');
+
+  const cont = $('scrimsContainer');
+  if(cont){
+    if(SCRIMS.length === 0){ cont.innerHTML = `<div class="empty-state">No hay scrims creadas todavía. Vuelve más tarde.</div>`; }
+    else { cont.innerHTML = `<div class="grid">${SCRIMS.map(renderScrimCard).join('')}</div>`; }
   }
-  function leerSesion(){
-    try{
-      const raw = sessionStorage.getItem(LS_KEY);
-      if(!raw) return null;
-      const s = JSON.parse(raw);
-      // expira en 4 horas
-      if(Date.now() - s.ts > 4*60*60*1000) return null;
-      return s.user;
-    }catch{ return null; }
-  }
-  function cerrarSesion(){
-    sessionStorage.removeItem(LS_KEY);
-    location.reload();
-  }
 
-  // ================= RENDER PANEL =================
-  function cargarPanel(userKey){
-    const staff = STAFF[userKey];
-    if(!staff) return;
-
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('panelView').classList.add('show');
-    document.getElementById('userName').textContent = staff.nombre;
-    document.getElementById('userRol').textContent = staff.rol;
-
-    const cont = document.getElementById('bloquesContainer');
-    cont.innerHTML = staff.bloques.map(id => renderBloqueStaff(id, userKey)).join('');
-  }
-
-  function renderBloqueStaff(id, userKey){
-    const b = BLOQUES[id];
-    const equipos = b.equipos.map((eq, i) => `
-      <div class="equipo-item">
-        <span><span class="idx">#${i+1}</span> ${eq}</span>
-        <button onclick="eliminarEquipo('${id}','${userKey}',${i})" title="Eliminar">✕</button>
-      </div>
-    `).join('') || '<div class="empty">Sin equipos inscritos aún</div>';
-
-    return `
-      <div class="bloque">
-        <h3>${b.nombre} <span class="hora">${b.hora}</span></h3>
-        <div class="meta">${b.dia} · Org: ${b.orgDefault || '—'}</div>
-
-        <div class="row">
-          <select id="estado_${id}" onchange="cambiarEstado('${id}','${userKey}')">
-            <option value="libre" ${b.estado==='libre'?'selected':''}>🟢 Libre</option>
-            <option value="en_curso" ${b.estado==='en_curso'?'selected':''}>🟡 En curso</option>
-            <option value="cerrado" ${b.estado==='cerrado'?'selected':''}>⚪ Cerrado</option>
-            <option value="cancelado" ${b.estado==='cancelado'?'selected':''}>🔴 Cancelado</option>
-          </select>
-        </div>
-
-        <textarea id="notas_${id}" placeholder="Notas internas del bloque (visible en público)"
-          onblur="guardarNotas('${id}','${userKey}')">${b.notas || ''}</textarea>
-
-        <div class="equipos-list">
-          ${equipos}
-        </div>
-
-        <div class="row">
-          <input type="text" id="nuevoEq_${id}" placeholder="Nombre del equipo..." maxlength="30" />
-          <button class="btn-sm" onclick="agregarEquipo('${id}','${userKey}')">+ Añadir</button>
-        </div>
-      </div>
+  const links = $('links');
+  if(links){
+    links.innerHTML = `
+      <a class="ig" href="${LINKS.instagram}" target="_blank" rel="noopener">Instagram Corp</a>
+      <a class="ig" href="${LINKS.creador}" target="_blank" rel="noopener">Creador</a>
     `;
   }
+}
 
-  // ================= ACCIONES =================
-  function cambiarEstado(id, userKey){
-    const val = document.getElementById('estado_'+id).value;
-    BLOQUES[id].estado = val;
-    mostrarToast('Estado actualizado');
-  }
-  function guardarNotas(id, userKey){
-    BLOQUES[id].notas = document.getElementById('notas_'+id).value;
-    mostrarToast('Notas guardadas');
-  }
-  function agregarEquipo(id, userKey){
-    const input = document.getElementById('nuevoEq_'+id);
-    const nombre = input.value.trim();
-    if(!nombre) return;
-    if(BLOQUES[id].equipos.length >= BLOQUES[id].maxSlots){
-      alert('Este bloque ya está lleno.');
-      return;
-    }
-    BLOQUES[id].equipos.push(nombre);
-    input.value = '';
-    recargarPanel(userKey);
-  }
-  function eliminarEquipo(id, userKey, idx){
-    if(!confirm('¿Eliminar este equipo del bloque?')) return;
-    BLOQUES[id].equipos.splice(idx, 1);
-    recargarPanel(userKey);
-  }
-  function recargarPanel(userKey){
-    document.getElementById('bloquesContainer').innerHTML =
-      STAFF[userKey].bloques.map(id => renderBloqueStaff(id, userKey)).join('');
-  }
+function renderScrimCard(s){
+  const ocupados = s.equipos.length;
+  const libres = s.max - ocupados;
+  const pct = Math.min(100, (ocupados / s.max) * 100);
+  const lleno = libres <= 0;
+  const cerrado = s.estado === 'cerrado';
+  const cancelado = s.estado === 'cancelado';
+  let badgeCls = 'libre', badgeTxt = 'Disponible';
+  if(lleno){ badgeCls='lleno'; badgeTxt='Sin cupos'; }
+  if(cerrado){ badgeCls='cerrado'; badgeTxt='Cerrada'; }
+  if(cancelado){ badgeCls='cerrado'; badgeTxt='Cancelada'; }
+  const disabled = lleno || cerrado || cancelado;
+  const btnTxt = lleno ? 'Sin cupos' : cerrado ? 'Inscripción cerrada' : cancelado ? 'Scrim cancelada' : 'Reservar cupo';
+  return `
+    <div class="scrim">
+      <div class="head"><h3>${esc(s.nombre)}</h3><span class="badge ${badgeCls}">${badgeTxt}</span></div>
+      <div class="info">Día: <b>${esc(s.dia)}</b><br>Horario: <b>${esc(s.hora)}</b><br>Organizador: <b>${esc(s.org || 'Por asignar')}</b></div>
+      ${s.notas ? `<div class="info" style="color:#ffb703">${esc(s.notas)}</div>` : ''}
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="slots"><span>Cupos</span><span><strong>${libres}</strong> libres · ${ocupados}/${s.max}</span></div>
+      <button class="btn-reservar" ${disabled?'disabled':''} onclick="abrirReserva('${s.id}')">${btnTxt}</button>
+    </div>
+  `;
+}
 
-  function mostrarToast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg + ' ✓';
-    t.classList.add('show');
-    clearTimeout(t._timeout);
-    t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
-  }
+/* ============================================================
+   RESERVA
+   ============================================================ */
+let scrimActual = null;
+function abrirReserva(id){
+  scrimActual = SCRIMS.find(s => s.id === id);
+  if(!scrimActual) return;
+  const libres = scrimActual.max - scrimActual.equipos.length;
+  if(libres <= 0){ alert('Esta scrim ya no tiene cupos.'); return; }
+  safeSet('reservaTitulo', 'textContent', 'Reservar: ' + scrimActual.nombre);
+  safeSet('reservaSub', 'textContent', `${scrimActual.hora} · ${libres} cupos disponibles`);
+  const fw = $('reservaFormWrap'); if(fw) fw.style.display = 'block';
+  const ok = $('reservaOk'); if(ok) ok.style.display = 'none';
+  safeSet('reservaError', 'textContent', '');
+  const m = $('reservaModal'); if(m) m.classList.add('show');
+}
 
-  // ================= EVENTOS LOGIN =================
-  document.getElementById('loginBtn').addEventListener('click', () => {
-    const u = document.getElementById('user').value.trim().toLowerCase();
-    const p = document.getElementById('pass').value;
-    const err = document.getElementById('loginError');
+document.getElementById('confirmarReserva').addEventListener('click', () => {
+  const eq = $('rEquipo').value.trim();
+  const tag = $('rTag').value.trim();
+  const wa = $('rWa').value.trim();
+  const err = $('reservaError');
+  if(!eq || !tag || !wa){ err.textContent = 'Completa todos los campos.'; return; }
+  if(!scrimActual) return;
+  if(scrimActual.equipos.some(e => e.equipo.toLowerCase() === eq.toLowerCase())){ err.textContent = 'Ese equipo ya está inscrito.'; return; }
+  if(scrimActual.equipos.length >= scrimActual.max){ err.textContent = 'Cupos agotados.'; return; }
+  scrimActual.equipos.push({ equipo: eq, tag: tag, wa: wa, ts: Date.now() });
+  guardarScrims();
+  const linkWa = scrimActual.linkWa || (GRUPOS[0] && GRUPOS[0].link) || '#';
+  safeSet('linkGrupoOk', 'href', linkWa);
+  const fw = $('reservaFormWrap'); if(fw) fw.style.display = 'none';
+  const ok = $('reservaOk'); if(ok) ok.style.display = 'block';
+  renderPublico();
+});
 
-    if(!STAFF[u]){
-      err.textContent = 'Usuario no encontrado.';
-      return;
-    }
-    if(STAFF[u].pass !== p){
-      err.textContent = 'Contraseña incorrecta.';
-      return;
-    }
-    err.textContent = '';
-    guardarSesion(u);
-    cargarPanel(u);
+/* ============================================================
+   PANEL ADMIN
+   ============================================================ */
+function cargarPanel(){
+  safeSet('userName', 'textContent', ADMIN.nombre);
+  safeSet('userRol', 'textContent', ADMIN.rol);
+  renderAdminList();
+  renderSelectScrims();
+  renderSelectGrupos();
+  renderGruposList();
+  renderConfigPosiciones();
+  renderConfigInputs();
+  renderRanking();
+  showView('panel');
+}
+
+function renderAdminList(){
+  const cont = $('adminList');
+  if(!cont) return;
+  if(SCRIMS.length === 0){ cont.innerHTML = '<div class="empty-state">Aún no has creado ninguna scrim.</div>'; return; }
+  cont.innerHTML = SCRIMS.map(s => {
+    const libres = s.max - s.equipos.length;
+    return `
+      <div class="admin-item">
+        <div class="meta"><b>${esc(s.nombre)}</b><br>${esc(s.dia)} · ${esc(s.hora)}<br>Org: ${esc(s.org || '—')} · ${s.equipos.length}/${s.max} (${libres} libres)</div>
+        <div class="acciones">
+          <button class="btn-sm ver" onclick="verEquipos('${s.id}')">Equipos</button>
+          <button class="btn-sm ver" onclick="irAResultados('${s.id}')">Resultados</button>
+          <button class="btn-sm edit" onclick="toggleEstado('${s.id}')">${s.estado === 'abierta' ? 'Cerrar' : 'Abrir'}</button>
+          <button class="btn-sm del" onclick="eliminarScrim('${s.id}')">Borrar</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+document.getElementById('crearBtn').addEventListener('click', () => {
+  const nombre = $('newNombre').value.trim();
+  const dia = $('newDia').value.trim();
+  const hora = $('newHora').value.trim();
+  const org = $('newOrg').value.trim();
+  const max = parseInt($('newMax').value) || 12;
+  const linkWa = $('newLink').value;
+  const notas = $('newNotas').value.trim();
+  if(!nombre || !dia || !hora){ alert('Completa nombre, día y horario.'); return; }
+  const nueva = { id: 's_' + Date.now(), nombre, dia, hora, org, max, linkWa, notas, estado: 'abierta', equipos: [], resultados: null };
+  SCRIMS.push(nueva);
+  guardarScrims();
+  renderAdminList();
+  renderPublico();
+  renderSelectScrims();
+  ['newNombre','newDia','newHora','newOrg','newNotas'].forEach(id => { const el = $(id); if(el) el.value = ''; });
+  safeSet('newMax', 'value', 12);
+  safeSet('newLink', 'value', '');
+  mostrarToast('Scrim creada');
+});
+
+function toggleEstado(id){
+  const s = SCRIMS.find(x => x.id === id); if(!s) return;
+  s.estado = s.estado === 'abierta' ? 'cerrada' : 'abierta';
+  guardarScrims(); renderAdminList(); renderPublico(); mostrarToast('Estado actualizado');
+}
+function eliminarScrim(id){
+  if(!confirm('¿Eliminar esta scrim?')) return;
+  SCRIMS = SCRIMS.filter(s => s.id !== id);
+  guardarScrims(); renderAdminList(); renderPublico(); renderSelectScrims(); mostrarToast('Scrim eliminada');
+}
+
+/* ============================================================
+   MODAL EQUIPOS (ver/eliminar)
+   ============================================================ */
+let scrimEquiposId = null;
+function verEquipos(id){
+  const s = SCRIMS.find(x => x.id === id);
+  if(!s) return;
+  scrimEquiposId = id;
+  safeSet('equiposTitulo', 'textContent', 'Equipos: ' + s.nombre);
+  safeSet('equiposSub', 'textContent', `${s.equipos.length}/${s.max} inscritos · ${s.max - s.equipos.length} cupos libres`);
+  renderEquiposLista();
+  const m = $('equiposModal'); if(m) m.classList.add('show');
+}
+function renderEquiposLista(){
+  const cont = $('equiposLista');
+  if(!cont) return;
+  const s = SCRIMS.find(x => x.id === scrimEquiposId);
+  if(!s){ cont.innerHTML = ''; return; }
+  if(s.equipos.length === 0){ cont.innerHTML = '<div class="empty-state">No hay equipos inscritos.</div>'; return; }
+  cont.innerHTML = s.equipos.map((e, i) => `
+    <div class="equipo-row">
+      <div class="info-eq">
+        <b>${esc(e.equipo)}</b> <span style="color:var(--neon2)">[${esc(e.tag)}]</span><br>
+        <small>${esc(e.wa)}</small>
+      </div>
+      <button onclick="expulsarEquipo(${i})" title="Expulsar">×</button>
+    </div>
+  `).join('');
+}
+function expulsarEquipo(idx){
+  const s = SCRIMS.find(x => x.id === scrimEquiposId);
+  if(!s) return;
+  if(!confirm('¿Expulsar este equipo? El cupo se liberará automáticamente.')) return;
+  s.equipos.splice(idx, 1);
+  guardarScrims();
+  renderEquiposLista();
+  renderAdminList();
+  renderPublico();
+  const sub = $('equiposSub');
+  if(sub) sub.textContent = `${s.equipos.length}/${s.max} inscritos · ${s.max - s.equipos.length} cupos libres`;
+  mostrarToast('Equipo expulsado, cupo liberado');
+}
+safeOn('cerrarEquipos', 'click', () => { const m = $('equiposModal'); if(m) m.classList.remove('show'); });
+
+/* ============================================================
+   GRUPOS
+   ============================================================ */
+function renderSelectGrupos(){
+  const sel = $('newLink');
+  if(!sel) return;
+  const actual = sel.value;
+  sel.innerHTML = '<option value="">Selecciona un grupo</option>' +
+    GRUPOS.map(g => `<option value="${esc(g.link)}">${esc(g.nombre)}</option>`).join('');
+  if(actual) sel.value = actual;
+}
+function renderGruposList(){
+  const cont = $('gruposList');
+  if(!cont) return;
+  if(GRUPOS.length === 0){ cont.innerHTML = '<div class="empty-state">No hay grupos registrados todavía.</div>'; return; }
+  cont.innerHTML = GRUPOS.map((g, i) => `
+    <div class="admin-item">
+      <div class="meta"><b>${esc(g.nombre)}</b><br><span style="word-break:break-all">${esc(g.link)}</span></div>
+      <div class="acciones">
+        <button class="btn-sm del" onclick="eliminarGrupo(${i})">Borrar</button>
+      </div>
+    </div>
+  `).join('');
+}
+safeOn('agregarGrupoBtn', 'click', () => {
+  const nombre = $('grupoNombre').value.trim();
+  const link = $('grupoLink').value.trim();
+  if(!nombre || !link){ alert('Completa nombre y link.'); return; }
+  GRUPOS.push({ nombre, link });
+  guardarGruposStorage();
+  renderGruposList();
+  renderSelectGrupos();
+  safeSet('grupoNombre', 'value', '');
+  safeSet('grupoLink', 'value', '');
+  mostrarToast('Grupo agregado');
+});
+function eliminarGrupo(idx){
+  if(!confirm('¿Eliminar este grupo?')) return;
+  GRUPOS.splice(idx, 1);
+  guardarGruposStorage();
+  renderGruposList();
+  renderSelectGrupos();
+  mostrarToast('Grupo eliminado');
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    tab.classList.add('active');
+    const target = $('tab-' + tab.dataset.tab);
+    if(target) target.style.display = 'block';
+    if(tab.dataset.tab === 'resultados'){ renderSelectScrims(); renderFormResultados(); }
+    if(tab.dataset.tab === 'ranking') renderRanking();
+    if(tab.dataset.tab === 'grupos'){ renderGruposList(); renderSelectGrupos(); }
   });
+});
+function irAResultados(id){
+  const tab = document.querySelector('.tab[data-tab="resultados"]');
+  if(tab) tab.click();
+  setTimeout(() => {
+    safeSet('selScrimResultados', 'value', id);
+    renderFormResultados();
+  }, 50);
+}
 
-  document.getElementById('pass').addEventListener('keydown', e => {
-    if(e.key === 'Enter') document.getElementById('loginBtn').click();
+/* ============================================================
+   CONFIGURACIÓN
+   ============================================================ */
+function renderConfigPosiciones(){
+  const cont = $('configPosiciones');
+  if(!cont) return;
+  let html = '';
+  for(let i = 0; i < 12; i++){
+    html += `
+      <div class="pos-input">
+        <div class="num">#${i+1}</div>
+        <div style="color:var(--muted);font-size:13px">Top ${i+1}</div>
+        <input type="number" id="cfgPos_${i}" value="${CONFIG.posPts[i]}" min="0" step="0.5" style="padding:8px" />
+        <div class="pts-preview">pts</div>
+      </div>`;
+  }
+  cont.innerHTML = html;
+}
+function renderConfigInputs(){
+  safeSet('cfgKill', 'value', CONFIG.killPts);
+  safeSet('cfgAcumular', 'value', CONFIG.acumular);
+}
+
+document.getElementById('guardarConfig').addEventListener('click', () => {
+  CONFIG.killPts = parseFloat($('cfgKill').value) || 0;
+  CONFIG.acumular = $('cfgAcumular').value;
+  const nuevasPos = [];
+  for(let i = 0; i < 12; i++){ const el = $('cfgPos_'+i); nuevasPos.push(el ? (parseFloat(el.value) || 0) : 0); }
+  CONFIG.posPts = nuevasPos;
+  guardarConfigStorage();
+  mostrarToast('Configuración guardada');
+  renderFormResultados();
+  renderRanking();
+});
+
+/* ============================================================
+   RESULTADOS
+   ============================================================ */
+function renderSelectScrims(){
+  const sel = $('selScrimResultados');
+  if(!sel) return;
+  const actual = sel.value;
+  sel.innerHTML = '<option value="">Selecciona una scrim</option>' + SCRIMS.map(s => `<option value="${s.id}">${esc(s.nombre)} · ${esc(s.dia)}</option>`).join('');
+  if(actual && SCRIMS.find(s => s.id === actual)) sel.value = actual;
+}
+
+function renderFormResultados(){
+  const sel = $('selScrimResultados');
+  const cont = $('formResultados');
+  const tablaWrap = $('tablaResultadosWrap');
+  if(!cont) return;
+  if(!sel || !sel.value){
+    cont.innerHTML = '<div class="empty-state">Selecciona una scrim para ingresar resultados.</div>';
+    if(tablaWrap) tablaWrap.style.display = 'none';
+    return;
+  }
+  const s = SCRIMS.find(x => x.id === sel.value);
+  if(!s) return;
+  const res = s.resultados || {};
+  let html = '<div class="info-box">Equipos inscritos en esta scrim: <b>' + s.equipos.length + '</b>.</div>';
+  const maxRows = Math.max(12, s.equipos.length);
+  for(let i = 0; i < maxRows; i++){
+    const eq = s.equipos[i] ? s.equipos[i].equipo : '';
+    const r = res[eq] || { pos: '', kills: '' };
+    html += `
+      <div class="pos-input" style="grid-template-columns: 40px 1fr 80px 90px 90px">
+        <div class="num">${i+1}</div>
+        <input type="text" id="resEq_${i}" placeholder="Nombre del equipo" value="${esc(eq)}" style="padding:8px" />
+        <input type="number" id="resPos_${i}" placeholder="Pos" min="1" max="12" value="${r.pos}" style="padding:8px" />
+        <input type="number" id="resKills_${i}" placeholder="Kills" min="0" value="${r.kills}" style="padding:8px" />
+        <div class="pts-preview" id="prev_${i}">—</div>
+      </div>`;
+  }
+  cont.innerHTML = html;
+  for(let i = 0; i < maxRows; i++){
+    const posIn = $('resPos_'+i), killsIn = $('resKills_'+i), prev = $('prev_'+i);
+    if(!posIn || !killsIn || !prev) continue;
+    const update = () => {
+      const pos = parseInt(posIn.value) || 0;
+      const kills = parseInt(killsIn.value) || 0;
+      if(!pos && !kills){ prev.textContent = '—'; return; }
+      const ptsPos = pos >= 1 && pos <= 12 ? CONFIG.posPts[pos-1] : 0;
+      prev.innerHTML = `<span style="color:var(--neon2);font-weight:800">${ptsPos + kills * CONFIG.killPts} pts</span>`;
+    };
+    posIn.addEventListener('input', update);
+    killsIn.addEventListener('input', update);
+    update();
+  }
+  if(s.resultados && Object.keys(s.resultados).length > 0){
+    renderTablaResultados(s);
+    if(tablaWrap) tablaWrap.style.display = 'block';
+  } else {
+    if(tablaWrap) tablaWrap.style.display = 'none';
+  }
+}
+
+document.getElementById('guardarResultados').addEventListener('click', () => {
+  const sel = $('selScrimResultados');
+  if(!sel || !sel.value){ alert('Selecciona una scrim.'); return; }
+  const s = SCRIMS.find(x => x.id === sel.value);
+  if(!s) return;
+  const maxRows = Math.max(12, s.equipos.length);
+  const resultados = {};
+  for(let i = 0; i < maxRows; i++){
+    const eqEl = $('resEq_'+i), posEl = $('resPos_'+i), kEl = $('resKills_'+i);
+    if(!eqEl || !posEl || !kEl) continue;
+    const eq = eqEl.value.trim();
+    const pos = parseInt(posEl.value);
+    const kills = parseInt(kEl.value);
+    if(!eq || isNaN(pos) || isNaN(kills)) continue;
+    resultados[eq] = { pos, kills };
+  }
+  if(Object.keys(resultados).length === 0){ alert('Ingresa al menos un equipo con posición y kills.'); return; }
+  s.resultados = resultados;
+  guardarScrims();
+  renderTablaResultados(s);
+  const tablaWrap = $('tablaResultadosWrap'); if(tablaWrap) tablaWrap.style.display = 'block';
+  renderRanking();
+  mostrarToast('Resultados guardados');
+});
+
+function calcularPuntaje(pos, kills){
+  const ptsPos = pos >= 1 && pos <= 12 ? CONFIG.posPts[pos-1] : 0;
+  return ptsPos + (kills * CONFIG.killPts);
+}
+
+function renderTablaResultados(s){
+  const cont = $('tablaResultados');
+  if(!cont) return;
+  const filas = Object.entries(s.resultados).map(([eq, r]) => ({
+    equipo: eq, pos: r.pos, kills: r.kills, pts: calcularPuntaje(r.pos, r.kills)
+  })).sort((a,b) => b.pts - a.pts || b.kills - a.kills);
+  let html = `<table class="result-table"><thead><tr><th>#</th><th>Equipo</th><th>Pos</th><th>Kills</th><th>Puntos</th></tr></thead><tbody>`;
+  filas.forEach((f, i) => {
+    html += `<tr><td>${i+1}</td><td>${esc(f.equipo)}</td><td class="${f.pos === 1 ? 'top1' : ''}">Top ${f.pos}</td><td class="kills">${f.kills}</td><td class="pts">${f.pts}</td></tr>`;
   });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
 
-  document.getElementById('logoutBtn').addEventListener('click', cerrarSesion);
+/* ============================================================
+   OCR
+   ============================================================ */
+const ocrDrop = $('ocrDrop');
+const ocrInput = $('ocrInput');
+const ocrPreview = $('ocrPreview');
+const ocrProgress = $('ocrProgress');
+const ocrTextEl = $('ocrText');
 
-  // ================= AUTO-LOGIN =================
-  window.addEventListener('DOMContentLoaded', () => {
-    const activo = leerSesion();
-    if(activo && STAFF[activo]) cargarPanel(activo);
+if(ocrDrop) ocrDrop.addEventListener('click', () => { if(ocrInput) ocrInput.click(); });
+if(ocrDrop){
+  ocrDrop.addEventListener('dragover', e => { e.preventDefault(); ocrDrop.classList.add('dragover'); });
+  ocrDrop.addEventListener('dragleave', () => ocrDrop.classList.remove('dragover'));
+  ocrDrop.addEventListener('drop', e => {
+    e.preventDefault(); ocrDrop.classList.remove('dragover');
+    if(e.dataTransfer.files.length > 0) procesarImagen(e.dataTransfer.files[0]);
   });
+}
+if(ocrInput) ocrInput.addEventListener('change', e => { if(e.target.files.length > 0) procesarImagen(e.target.files[0]); });
+
+async function procesarImagen(file){
+  if(!file.type.startsWith('image/')){ alert('Selecciona una imagen.'); return; }
+  if(typeof Tesseract === 'undefined'){ if(ocrProgress) ocrProgress.textContent = 'No se pudo cargar el OCR. Revisa tu conexión.'; return; }
+
+  const url = URL.createObjectURL(file);
+  if(ocrPreview) ocrPreview.innerHTML = `<img src="${url}" alt="preview" />`;
+  if(ocrTextEl) ocrTextEl.style.display = 'none';
+  if(ocrProgress) ocrProgress.textContent = 'Procesando imagen...';
+
+  try{
+    const resultado = await Tesseract.recognize(file, 'spa+eng', {
+      logger: m => {
+        if(m.status === 'recognizing text' && ocrProgress){
+          ocrProgress.textContent = `Reconociendo texto... ${Math.round(m.progress*100)}%`;
+        }
+      }
+    });
+    const texto = resultado.data.text.trim();
+    if(ocrProgress) ocrProgress.textContent = 'Texto detectado. Revisa y corrige manualmente abajo.';
+    if(ocrTextEl){ ocrTextEl.style.display = 'block'; ocrTextEl.textContent = texto || '(No se detectó texto legible)'; }
+    intentarPreRellenar(texto);
+  }catch(e){
+    if(ocrProgress) ocrProgress.textContent = 'Error al procesar. Intenta con otra imagen o ingresa manualmente.';
+    console.error(e);
+  }
+}
+
+function intentarPreRellenar(texto){
+  const lineas = texto.split('\n').map(l => l.trim()).filter(Boolean);
+  const detectados = [];
+  lineas.forEach(l => {
+    const numeros = l.match(/\d+/g);
+    if(numeros && numeros.length >= 2){
+      const pos = parseInt(numeros[0]);
+      const kills = parseInt(numeros[1]);
+      if(pos >= 1 && pos <= 12 && kills >= 0 && kills < 100){
+        const nombre = l.replace(/\d+/g, '').replace(/[^\w\sÁÉÍÓÚáéíóúñÑ]/g, '').trim();
+        if(nombre && nombre.length > 2) detectados.push({ nombre, pos, kills });
+      }
+    }
+  });
+  if(detectados.length === 0) return;
+  for(let i = 0; i < Math.min(12, detectados.length); i++){
+    const d = detectados[i];
+    const eqIn = $('resEq_'+i), posIn = $('resPos_'+i), kIn = $('resKills_'+i);
+    if(eqIn && !eqIn.value) eqIn.value = d.nombre.substring(0, 30);
+    if(posIn && !posIn.value) posIn.value = d.pos;
+    if(kIn && !kIn.value) kIn.value = d.kills;
+    if(posIn) posIn.dispatchEvent(new Event('input'));
+    if(kIn) kIn.dispatchEvent(new Event('input'));
+  }
+  mostrarToast('OCR pre-rellenó algunos campos. Verifícalos.');
+}
+
+/* ============================================================
+   RANKING
+   ============================================================ */
+function renderRanking(){
+  const cont = $('rankingTabla');
+  const info = $('rankingInfo');
+  if(!cont) return;
+  const totales = {};
+  SCRIMS.forEach(s => {
+    if(!s.resultados) return;
+    Object.entries(s.resultados).forEach(([eq, r]) => {
+      if(!totales[eq]) totales[eq] = { pts: 0, kills: 0, scrims: 0 };
+      totales[eq].pts += calcularPuntaje(r.pos, r.kills);
+      totales[eq].kills += r.kills;
+      totales[eq].scrims += 1;
+    });
+  });
+  const lista = Object.entries(totales).map(([eq, t]) => ({ eq, ...t })).sort((a,b) => b.pts - a.pts || b.kills - a.kills);
+  if(lista.length === 0){
+    cont.innerHTML = '<div class="empty-state">Aún no hay resultados guardados en ninguna scrim.</div>';
+    if(info) info.textContent = '';
+    return;
+  }
+  if(info) info.innerHTML = 'Ranking general (suma de todas las scrims con resultados guardados).';
+  let html = `<table class="result-table"><thead><tr><th>#</th><th>Equipo</th><th>Scrims</th><th>Kills</th><th>Puntos</th></tr></thead><tbody>`;
+  lista.forEach((f, i) => {
+    html += `<tr><td>${i+1}</td><td>${esc(f.eq)}</td><td>${f.scrims}</td><td class="kills">${f.kills}</td><td class="pts">${f.pts}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  cont.innerHTML = html;
+}
+
+document.getElementById('exportRanking').addEventListener('click', () => {
+  const totales = {};
+  SCRIMS.forEach(s => {
+    if(!s.resultados) return;
+    Object.entries(s.resultados).forEach(([eq, r]) => {
+      if(!totales[eq]) totales[eq] = { pts: 0, kills: 0, scrims: 0 };
+      totales[eq].pts += calcularPuntaje(r.pos, r.kills);
+      totales[eq].kills += r.kills;
+      totales[eq].scrims += 1;
+    });
+  });
+  const lista = Object.entries(totales).map(([eq, t]) => ({ eq, ...t })).sort((a,b) => b.pts - a.pts);
+  if(lista.length === 0){ alert('No hay datos para exportar.'); return; }
+  let csv = 'Equipo,Scrims,Kills,Puntos\n';
+  lista.forEach(f => { csv += `"${f.eq}",${f.scrims},${f.kills},${f.pts}\n`; });
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ranking_spiders.csv';
+  a.click();
+});
+
+/* ============================================================
+   LOGIN / LOGOUT
+   ============================================================ */
+document.getElementById('goStaff').addEventListener('click', () => {
+  if(leerSesion() === 'admin') cargarPanel();
+  else showView('login');
+});
+document.getElementById('backPublic').addEventListener('click', () => { showView('public'); renderPublico(); });
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const u = $('user').value.trim().toLowerCase();
+  const p = $('pass').value;
+  const err = $('loginError');
+  if(u !== ADMIN.user || p !== ADMIN.pass){ err.textContent = 'Credenciales incorrectas.'; return; }
+  err.textContent = '';
+  guardarSesion('admin');
+  cargarPanel();
+});
+document.getElementById('pass').addEventListener('keydown', e => { if(e.key === 'Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  try{ sessionStorage.removeItem(LS_SESSION); }catch(e){}
+  showView('public'); renderPublico();
+});
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function mostrarToast(msg){
+  const t = $('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============================================================
+   LISTENERS SEGUROS
+   ============================================================ */
+safeOn('cerrarReserva', 'click', () => { const m = $('reservaModal'); if(m) m.classList.remove('show'); });
+safeOn('cerrarOk', 'click', () => { const m = $('reservaModal'); if(m) m.classList.remove('show'); });
+safeOn('selScrimResultados', 'change', renderFormResultados);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  renderPublico();
+  showView('public');
+  if(leerSesion() === 'admin') cargarPanel();
+});
 </script>
 </body>
 </html>
